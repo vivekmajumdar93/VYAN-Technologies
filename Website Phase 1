@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  overflow:hidden;
+  font-family:sans-serif;
+  color:#fff;
+}
+
+/* LOADER */
+#loader{
+  position:fixed;
+  width:100%;
+  height:100%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#000;
+  z-index:9999;
+}
+
+#loader img{
+  width:100px;
+  animation:pulse 1.5s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);opacity:1}
+  50%{transform:scale(1.15);opacity:0.6}
+  100%{transform:scale(1);opacity:1}
+}
+
+/* APP */
+#app{
+  display:none;
+}
+
+/* VOID FIELD */
+#void{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  filter:blur(25px);
+  opacity:0.8;
+}
+
+/* CENTER */
+#center{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  text-align:center;
+  transition:0.3s;
+}
+
+#logo{
+  width:90px;
+  filter:
+    drop-shadow(0 0 8px rgba(140,100,255,0.8))
+    drop-shadow(0 0 25px rgba(120,90,255,0.4));
+}
+
+#label{
+  margin-top:10px;
+  font-size:16px;
+}
+
+/* PANEL */
+#panel{
+  position:absolute;
+  bottom:-100%;
+  left:50%;
+  transform:translateX(-50%);
+  width:85%;
+  max-width:400px;
+  background:rgba(255,255,255,0.05);
+  border-radius:14px;
+  padding:20px;
+  transition:0.4s;
+}
+
+#panel.show{
+  bottom:10%;
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOADER -->
+<div id="loader">
+  <img src="https://lh3.googleusercontent.com/d/1ZDlyw1oCDZLOs5xbZmxp2MiPYqD5cASc">
+</div>
+
+<!-- APP -->
+<div id="app">
+
+<div id="void"></div>
+
+<div id="center">
+  <img id="logo"
+  src="https://lh3.googleusercontent.com/d/1ZDlyw1oCDZLOs5xbZmxp2MiPYqD5cASc">
+  <div id="label">VYAN Technologies</div>
+</div>
+
+<div id="panel">Page Content</div>
+
+</div>
+
+<script>
+
+/* LOADER EXIT */
+setTimeout(()=>{
+  document.getElementById("loader").style.display="none";
+  document.getElementById("app").style.display="block";
+  startVoid();
+},2000);
+
+/* VOID FLOW */
+function startVoid(){
+  const v=document.getElementById("void");
+  let t=0;
+
+  function animate(){
+    t+=0.002;
+
+    v.style.background=
+    `radial-gradient(800px 400px at ${50+Math.sin(t)*10}% ${55+Math.cos(t)*10}%, rgba(120,90,255,0.18), transparent 60%),
+     radial-gradient(600px 300px at ${30+Math.cos(t)*8}% ${30+Math.sin(t)*8}%, rgba(80,120,255,0.10), transparent 60%),
+     radial-gradient(700px 350px at ${70+Math.sin(t)*6}% ${70+Math.cos(t)*6}%, rgba(180,80,255,0.10), transparent 60%)`;
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}
+
+/* PAGES */
+const pages=[
+"VYAN Technologies",
+"About Us",
+"Product Showcase",
+"Request Order",
+"Subscriptions",
+"Ask Nova",
+"Contact Us"
+];
+
+let i=0;
+
+const label=document.getElementById("label");
+const panel=document.getElementById("panel");
+const center=document.getElementById("center");
+
+/* UPDATE */
+function update(){
+  label.innerText=pages[i];
+}
+
+/* NAVIGATION */
+function nav(dir){
+
+  if(dir==="next") i=(i+1)%pages.length;
+  else i=(i-1+pages.length)%pages.length;
+
+  center.style.transform=
+  "translate(-50%,-50%) scale(0.7)";
+
+  setTimeout(()=>{
+    center.style.transform=
+    "translate(-50%,-50%) scale(1)";
+    update();
+  },200);
+}
+
+/* DESKTOP */
+window.addEventListener("wheel",e=>{
+  if(e.deltaY>0) nav("next");
+  else nav("prev");
+});
+
+/* MOBILE */
+let startY=0;
+
+window.addEventListener("touchstart",e=>{
+  startY=e.touches[0].clientY;
+});
+
+window.addEventListener("touchend",e=>{
+  let endY=e.changedTouches[0].clientY;
+
+  if(startY-endY>30) nav("next");
+  if(endY-startY>30) nav("prev");
+});
+
+/* CLICK */
+center.onclick=()=>{
+  panel.classList.toggle("show");
+};
+
+update();
+
+</script>
+
+</body>
+</html>
