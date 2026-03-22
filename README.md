@@ -1,2 +1,2 @@
-# Vyan
+# VYAN Technologies
 Website
